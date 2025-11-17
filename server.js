@@ -1,12 +1,23 @@
-import express from "express"
-
+const express = require("express");
+const connectDB = require("./db/auth");
+const userRoutes = require("./routes/userRoute"); 
 const app = express();
+const PORT = 3000;
 
-const PORT = 3000
+const server = async () => {
+  try {
+    app.use(express.json());
 
+    await connectDB(); 
 
+    app.use("/api/user", userRoutes); 
 
-app.listen(PORT, () => {
-    console.log(`server is running port ${PORT}`);
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-})
+server();
