@@ -5,7 +5,7 @@ const { setUser } = require("../services/auth");
 // Signup
 const handleSignup = async (req, res) => {
     try {
-        const { email, firstname , lastname, password } = req.body;
+        const { email, firstname, lastname, password } = req.body;
 
         if (!email || !firstname || !lastname || !password) {
             return res.status(400).json({ message: "All fields are required" });
@@ -21,18 +21,25 @@ const handleSignup = async (req, res) => {
         const newUser = new User({
             email,
             firstname,
-            lastname ,
+            lastname,
             password: hashedPassword,
         });
         await newUser.save();
 
-        
 
-        res.status(201).json({ message: "User created successfully" , user :{
-            email : newUser.email ,
-            firstname : newUser.firstname ,
-            lastname : newUser.lastname
-        } , token});
+        const token = setUser(newUser);
+
+        res.cookie("token" , token)
+
+
+
+        res.status(201).json({
+            message: "User created successfully", user: {
+                email: newUser.email,
+                firstname: newUser.firstname,
+                lastname: newUser.lastname
+            }, token
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
@@ -89,4 +96,49 @@ const handleGetProfile = async (req, res) => {
     }
 };
 
-module.exports = { handleSignup, handleLogin, handleGetProfile };
+
+const handleUpdateProfile = async (req, res) => {
+    try {
+        const paramId = req.params.id;
+        const { firstname, lastname, gendar, mobilenumber, profileAvatar } = req.body;
+        
+        // Input validation
+        if (!paramId) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+
+        const response = await User.findByIdAndUpdate(
+            paramId, 
+            { firstname, lastname, gendar, mobilenumber, profileAvatar }, 
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        // Check if user was found and updated
+        if (!response) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Profile updated successfully",
+            user: response
+        });
+
+    } catch (error) {
+        console.log("Update profile error:", error);
+        
+        // Handle different types of errors
+        if (error.name === 'CastError') {
+            return res.status(400).json({ error: "Invalid user ID format" });
+        }
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
+        
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+module.exports = { handleSignup, handleLogin, handleGetProfile  ,handleUpdateProfile};

@@ -1,8 +1,12 @@
-const mongoose = require ("mongoose");
+const mongoose = require("mongoose");
 
 
 const userSchema = new mongoose.Schema({
-    name: {
+    firstname: {
+        type: String,
+        require: true
+    },
+    lastname: {
         type: String,
         require: true
     },
@@ -21,6 +25,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "/image/defultimage.jpg"
 
+    }, gendar: {
+        type: String,
+        require: true
+    }, mobilenumber: {
+        type: Number,
+        require: true
     }
 }, { timeseries: true })
 
