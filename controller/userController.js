@@ -5,9 +5,9 @@ const { setUser } = require("../services/auth");
 // Signup
 const handleSignup = async (req, res) => {
     try {
-        const { email, name, password } = req.body;
+        const { email, firstname , lastname, password } = req.body;
 
-        if (!email || !name || !password) {
+        if (!email || !firstname || !lastname || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -20,22 +20,19 @@ const handleSignup = async (req, res) => {
 
         const newUser = new User({
             email,
-            name,
+            firstname,
+            lastname ,
             password: hashedPassword,
         });
-
         await newUser.save();
 
-        const token = setUser(newUser);
+        
 
-        // Set token in HTTP-only cookie
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production", // send only over HTTPS in production
-            maxAge: 3600000 // 1 hour
-        });
-
-        res.status(201).json({ message: "User created successfully", token });
+        res.status(201).json({ message: "User created successfully" , user :{
+            email : newUser.email ,
+            firstname : newUser.firstname ,
+            lastname : newUser.lastname
+        } , token});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
