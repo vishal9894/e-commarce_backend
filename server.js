@@ -1,16 +1,21 @@
 const express = require("express");
 const connectDB = require("./db/auth");
 const userRoutes = require("./routes/userRoute");
-const cookiesParser = require("cookie-parser")
+const cookiesParser = require("cookie-parser");
+const path = require("path");
 const app = express();
 const PORT = 3000;
-const cors = require("cors")
+const cors = require("cors");
 
 const server = async () => {
   try {
     app.use(express.json());
     app.use(cookiesParser());
     
+    // Serve static files from public directory
+    app.use(express.static(path.join(__dirname, "public")));
+    
+  
     
     app.use(cors({
       origin: "http://localhost:5173", 

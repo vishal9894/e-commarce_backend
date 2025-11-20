@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { setUser } = require("../services/auth");
+const UserDetails = require("../models/userDetailsModel");
 
 // Signup
 const handleSignup = async (req, res) => {
@@ -29,7 +30,7 @@ const handleSignup = async (req, res) => {
 
         const token = setUser(newUser);
 
-        res.cookie("token" , token)
+        res.cookie("token", token)
 
 
 
@@ -100,16 +101,16 @@ const handleGetProfile = async (req, res) => {
 const handleUpdateProfile = async (req, res) => {
     try {
         const paramId = req.params.id;
-        const { firstname, lastname, gendar, mobilenumber, profileAvatar } = req.body;
-        
+        const { firstname, lastname, gender, mobilenumber, profileAvatar } = req.body;
+
         // Input validation
         if (!paramId) {
             return res.status(400).json({ error: "User ID is required" });
         }
 
         const response = await User.findByIdAndUpdate(
-            paramId, 
-            { firstname, lastname, gendar, mobilenumber, profileAvatar }, 
+            paramId,
+            { firstname, lastname, gender, mobilenumber, profileAvatar },
             {
                 new: true,
                 runValidators: true
@@ -128,7 +129,7 @@ const handleUpdateProfile = async (req, res) => {
 
     } catch (error) {
         console.log("Update profile error:", error);
-        
+
         // Handle different types of errors
         if (error.name === 'CastError') {
             return res.status(400).json({ error: "Invalid user ID format" });
@@ -136,9 +137,80 @@ const handleUpdateProfile = async (req, res) => {
         if (error.name === 'ValidationError') {
             return res.status(400).json({ error: error.message });
         }
-        
+
         res.status(500).json({ error: "Internal server error" });
     }
 }
 
-module.exports = { handleSignup, handleLogin, handleGetProfile  ,handleUpdateProfile};
+const handleCreateAddress = async (req, res) => {
+    try {
+        const { fullName, phoneNumber, pincode, addressType, address, location, city, state, landmark, isDefault } = req.body;
+
+        // Check if address already exists
+        const isMatch = await UserDetails.findOne({ address });
+
+        if (isMatch) {
+            return res.status(400).json({
+                message: "Address already exists"
+            });
+        }
+
+        // If new address is being set as default
+        if (isDefault === true) {
+            // Find and update any existing default address to non-default
+            await UserDetails.updateMany(
+                { isDefault: true },
+                { $set: { isDefault: false } }
+            );
+        }
+
+        const addresssave = new UserDetails({
+            fullName,
+            phoneNumber,
+            pincode,
+            addressType,
+            address,
+            location,
+            city,
+            state,
+            landmark,
+            isDefault: isDefault || false // Set to false if not provided
+        });
+
+        await addresssave.save();
+
+        res.status(200).json({
+            message: "Address created successfully",
+            addresssave
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+const handleActiveAddressFetch = async (req, res) => {
+    try {
+        const activeAddress = await UserDetails.findOne({ isDefault: true });
+
+        res.status(200).json({ message: "active account fetch sucessfully", activeAddress })
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const handleFetchAddress = async (req, res) => {
+    try {
+        const responseData = await UserDetails.find();
+
+        res.status(200).json({ message: ' fetch address sucessfully', responseData })
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+module.exports = { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch };

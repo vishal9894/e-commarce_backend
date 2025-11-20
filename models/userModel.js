@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "/image/defultimage.jpg"
 
-    }, gendar: {
+    }, gender: {
         type: String,
         require: true
     }, mobilenumber: {

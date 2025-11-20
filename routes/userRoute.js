@@ -1,13 +1,16 @@
-const { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile } = require("../controller/userController");
+const { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch } = require("../controller/userController");
 const authmiddleware = require("../middleware/authontication");
-const express = require("express").Router
+const upload = require("../middleware/multer"); // Import multer
+const express = require("express");
 
-const router = express();
+const router = express.Router();
 
 router.post("/signup", handleSignup);
 router.post("/login", handleLogin);
-router.get("/getprofile" , authmiddleware , handleGetProfile);
-router.put("/update/:id", handleUpdateProfile);
-
+router.get("/getprofile", authmiddleware, handleGetProfile);
+router.put("/update/:id", upload.single("avatar"), handleUpdateProfile); // Add multer middleware
+router.post("/add-address", handleCreateAddress);
+router.get("/get-address", handleFetchAddress);
+router.get("/get-active-address", handleActiveAddressFetch);
 
 module.exports = router;
