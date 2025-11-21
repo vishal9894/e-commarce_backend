@@ -2,7 +2,7 @@ const Products = require("../models/productsModles");
 
 const handleCreateProduct = async (req, res) => {
     try {
-        const { brand, offers, productName, rating, storage, mpr, discountMrp, wishlist, addCrad, image } = req.body;
+        const { brand, offers, productName, rating, storage, price, discount, wishlist, addCrad, image } = req.body;
 
        
 
@@ -13,8 +13,8 @@ const handleCreateProduct = async (req, res) => {
             productName,
             rating,
             storage,
-            mpr,
-            discountMrp,
+            price,
+            discount,
             wishlist: wishlist || false,
             addCrad: addCrad || false,
             image

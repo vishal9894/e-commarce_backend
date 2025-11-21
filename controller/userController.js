@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { setUser } = require("../services/auth");
 const UserDetails = require("../models/userDetailsModel");
+const path = require("path");
+const fs = require("fs");
 
 // Signup
 const handleSignup = async (req, res) => {
@@ -27,12 +29,9 @@ const handleSignup = async (req, res) => {
         });
         await newUser.save();
 
-
         const token = setUser(newUser);
 
         res.cookie("token", token)
-
-
 
         res.status(201).json({
             message: "User created successfully", user: {
@@ -97,32 +96,50 @@ const handleGetProfile = async (req, res) => {
     }
 };
 
-
+// Update profile with file upload
 const handleUpdateProfile = async (req, res) => {
     try {
         const paramId = req.params.id;
-        const { firstname, lastname, gender, mobilenumber, profileAvatar } = req.body;
+        const { firstname, lastname, gender, mobilenumber } = req.body;
 
         // Input validation
         if (!paramId) {
             return res.status(400).json({ error: "User ID is required" });
         }
 
+        // Check if user exists
+        const existingUser = await User.findById(paramId);
+        if (!existingUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Prepare update data
+        const updateData = { firstname, lastname, gender, mobilenumber };
+
+        // If file is uploaded, add profileAvatar to update data
+        if (req.file) {
+            // Delete old avatar if exists
+            if (existingUser.avatar) {
+                const oldAvatarPath = path.join(__dirname, "..", existingUser.avatar);
+                if (fs.existsSync(oldAvatarPath)) {
+                    fs.unlinkSync(oldAvatarPath);
+                }
+            }
+            // Save the file path (relative to uploads folder)
+            updateData.avatar = `/uploads/${req.file.filename}`;
+        }
+
         const response = await User.findByIdAndUpdate(
             paramId,
-            { firstname, lastname, gender, mobilenumber, profileAvatar },
+            updateData,
             {
                 new: true,
                 runValidators: true
             }
-        );
+        ).select("-password");
 
-        // Check if user was found and updated
-        if (!response) {
-            return res.status(404).json({ error: "User not found" });
-        }
 
-        res.status(200).json({
+        res.sendFile(200).json({
             message: "Profile updated successfully",
             user: response
         });
@@ -174,7 +191,7 @@ const handleCreateAddress = async (req, res) => {
             city,
             state,
             landmark,
-            isDefault: isDefault || false // Set to false if not provided
+            isDefault: isDefault || false 
         });
 
         await addresssave.save();
@@ -226,4 +243,13 @@ const handleFetchAddress = async (req, res) => {
     }
 }
 
-module.exports = { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch ,handleDeleteAddress  };
+module.exports = { 
+    handleSignup, 
+    handleLogin, 
+    handleGetProfile, 
+    handleUpdateProfile, 
+    handleCreateAddress, 
+    handleFetchAddress, 
+    handleActiveAddressFetch,
+    handleDeleteAddress 
+};

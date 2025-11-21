@@ -1,3 +1,4 @@
+// middleware/multer.js
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -14,7 +15,6 @@ const storage = multer.diskStorage({
         cb(null, uploadsDir);
     },
     filename: function (req, file, cb) {
-        // Create unique filename with timestamp
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, 'avatar-' + uniqueSuffix + path.extname(file.originalname));
     }

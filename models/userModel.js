@@ -21,9 +21,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    profileAvatar: {
+    avatar: {
         type: String,
-        default: "/image/defultimage.jpg"
+        
 
     }, gender: {
         type: String,

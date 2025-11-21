@@ -21,11 +21,11 @@ const ProductsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    mpr: {
+    price: {
         type: String,
         required: true
     },
-    discountMrp: {
+    discount: {
         type: String,
         required: true
     },

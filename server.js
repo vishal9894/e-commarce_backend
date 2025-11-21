@@ -12,11 +12,13 @@ const server = async () => {
   try {
     app.use(express.json());
     app.use(cookiesParser());
+    app.use(express.urlencoded({ extended: true }));
+
+
     
-    // Serve static files from public directory
-    app.use(express.static(path.join(__dirname, "public")));
-    
-  
+    // Serve static files from uploads directory - FIXED PATH
+    app.use('/uploads', express.static('uploads'));
+
     
     app.use(cors({
       origin: "http://localhost:5173", 
@@ -28,7 +30,7 @@ const server = async () => {
     await connectDB();
 
     app.use("/api/user", userRoutes);
-    app.use("/api/porduct" , productRoute);
+    app.use("/api/product", productRoute);
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
