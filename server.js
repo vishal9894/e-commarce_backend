@@ -6,6 +6,7 @@ const path = require("path");
 const app = express();
 const PORT = 3000;
 const cors = require("cors");
+const productRoute = require("./routes/productsRoute");
 
 const server = async () => {
   try {
@@ -27,6 +28,7 @@ const server = async () => {
     await connectDB();
 
     app.use("/api/user", userRoutes);
+    app.use("/api/porduct" , productRoute);
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);

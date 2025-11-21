@@ -1,4 +1,4 @@
-const { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch } = require("../controller/userController");
+const { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch, handleDeleteAddress } = require("../controller/userController");
 const authmiddleware = require("../middleware/authontication");
 const upload = require("../middleware/multer"); // Import multer
 const express = require("express");
@@ -12,5 +12,6 @@ router.put("/update/:id", upload.single("avatar"), handleUpdateProfile); // Add 
 router.post("/add-address", handleCreateAddress);
 router.get("/get-address", handleFetchAddress);
 router.get("/get-active-address", handleActiveAddressFetch);
+router.delete("/delete-address/:id" , handleDeleteAddress)
 
 module.exports = router;

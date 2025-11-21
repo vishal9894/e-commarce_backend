@@ -201,6 +201,19 @@ const handleActiveAddressFetch = async (req, res) => {
     }
 }
 
+const handleDeleteAddress = async (req, res) => {
+    try {
+        const paramId = req.params.id;
+        const response = await UserDetails.findByIdAndDelete(paramId);
+
+        res.status(200).json({ message: " address delete sucessfuly" });
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
 const handleFetchAddress = async (req, res) => {
     try {
         const responseData = await UserDetails.find();
@@ -213,4 +226,4 @@ const handleFetchAddress = async (req, res) => {
     }
 }
 
-module.exports = { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch };
+module.exports = { handleSignup, handleLogin, handleGetProfile, handleUpdateProfile, handleCreateAddress, handleFetchAddress, handleActiveAddressFetch ,handleDeleteAddress  };
