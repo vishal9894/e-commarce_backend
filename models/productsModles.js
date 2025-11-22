@@ -1,47 +1,53 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 const ProductsSchema = new mongoose.Schema({
+    category: {
+        type: String,
+        enum: ['MobilePhones    1', 'Cosmetics', 'Electronics', 'WashingMachines', 'Furniture', 'Watches', 'HomeDecor', 'Accessories'],
+        required: true
+    },
     brand: {
         type: String,
         required: true
     },
     offers: {
         type: Number,
-        required: true
+        default: 0
     },
     productName: {
         type: String,
         required: true
     },
     rating: {
-        type: String,
-        required: true
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
     },
     storage: {
         type: String,
-        required: true
+        default: ""
     },
     price: {
-        type: String,
+        type: Number,
         required: true
     },
     discount: {
-        type: String,
-        required: true
+        type: Number,
+        default: 0
     },
     wishlist: {
         type: Boolean,
-        required: true
+        default: false
     },
-    addCrad: {
+    addCrad: { // Consider renaming to 'addToCart' for better naming
         type: Boolean,
-        required: true
+        default: false
     },
     image: {
         type: String,
-        
+        required: true
     }
-
 }, { timestamps: true });
 
 const Products = mongoose.model("Product", ProductsSchema);
