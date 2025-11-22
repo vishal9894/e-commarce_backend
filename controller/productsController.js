@@ -4,7 +4,7 @@ const handleCreateProduct = async (req, res) => {
     try {
         const { brand, offers, productName, rating, storage, price, discount, wishlist, addCrad, image } = req.body;
 
-       
+      
 
         // Create new product instance
         const newProduct = new Products({
@@ -17,7 +17,7 @@ const handleCreateProduct = async (req, res) => {
             discount,
             wishlist: wishlist || false,
             addCrad: addCrad || false,
-            image
+            image 
         });
 
         // Save to database

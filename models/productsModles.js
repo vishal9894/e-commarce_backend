@@ -39,7 +39,7 @@ const ProductsSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: "/image/defultimage.jpg"
+        
     }
 
 }, { timestamps: true });

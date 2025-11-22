@@ -139,7 +139,7 @@ const handleUpdateProfile = async (req, res) => {
         ).select("-password");
 
 
-        res.sendFile(200).json({
+        res.status(200).json({
             message: "Profile updated successfully",
             user: response
         });
